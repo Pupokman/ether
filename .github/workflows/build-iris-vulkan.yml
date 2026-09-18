@@ -28,7 +28,7 @@ jobs:
           path: upstream
 
       - name: Set up Java 25
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "25"
@@ -99,7 +99,10 @@ jobs:
           done
 
           jar tf "$MCJAR" \
-            | grep -Ei 'com/mojang/renderpearl/.*(Compute|Storage|Image).*class
+            | grep -Ei 'com/mojang/renderpearl/.*(Compute|Storage|Image).*class$' \
+            | sort -u \
+            | tee renderpearl-api/advanced-classes.txt || true
+
       - name: Upload RenderPearl API dump
         uses: actions/upload-artifact@v4
         with:
@@ -110,39 +113,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: iris-vulkan-fabric-26.3
-          path: |
-            upstream/build/libs/iris-fabric-*.jar
-          if-no-files-found: warn
+          path: upstream/build/libs/iris-fabric-*.jar
+          if-no-files-found: error
 
       - name: Upload NeoForge build
         uses: actions/upload-artifact@v4
         with:
           name: iris-vulkan-neoforge-26.3
-          path: |
-            upstream/build/libs/iris-neoforge-*.jar
-          if-no-files-found: warn
- \
-            | sort -u \
-            | tee renderpearl-api/advanced-classes.txt || true
-
-      - name: Upload RenderPearl API dump
-        uses: actions/upload-artifact@v4
-        with:
-          name: renderpearl-api-26.3
-          path: renderpearl-api/api.txt
-
-      - name: Upload Fabric build
-        uses: actions/upload-artifact@v4
-        with:
-          name: iris-vulkan-fabric-26.3
-          path: |
-            upstream/build/libs/iris-fabric-*.jar
-          if-no-files-found: warn
-
-      - name: Upload NeoForge build
-        uses: actions/upload-artifact@v4
-        with:
-          name: iris-vulkan-neoforge-26.3
-          path: |
-            upstream/build/libs/iris-neoforge-*.jar
+          path: upstream/build/libs/iris-neoforge-*.jar
           if-no-files-found: warn
