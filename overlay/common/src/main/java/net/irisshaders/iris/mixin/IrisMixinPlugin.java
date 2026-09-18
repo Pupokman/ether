@@ -17,6 +17,15 @@ import java.util.*;
 public class IrisMixinPlugin implements IMixinConfigPlugin {
     private static final Splitter OPTION_SPLITTER = Splitter.on(':').limit(2);
 
+    private static final Set<String> VULKAN_SAFE_MIXINS = Set.of(
+        "net.irisshaders.iris.mixin.MixinPipelineBuilder",
+        "net.irisshaders.iris.mixin.MixinRenderPipeline",
+        "net.irisshaders.iris.mixin.vertices.MixinBufferBuilder",
+        "net.irisshaders.iris.mixin.vertices.immediate.MixinLevelRenderer",
+        "net.irisshaders.iris.mixin.vertices.immediate.MixinBufferSource",
+        "net.irisshaders.iris.mixin.vertices.immediate.MixinRenderType"
+    );
+
     public static boolean usingVulkan;
 
     static {
@@ -78,7 +87,11 @@ public class IrisMixinPlugin implements IMixinConfigPlugin {
             return usingVulkan;
         }
 
-        return !usingVulkan;
+        if (usingVulkan) {
+            return VULKAN_SAFE_MIXINS.contains(mixinClassName);
+        }
+
+        return true;
     }
 
     @Override
