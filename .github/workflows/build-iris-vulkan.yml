@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: iris-vulkan-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -64,6 +68,15 @@ jobs:
             com.mojang.renderpearl.frontend.shaders.GlslCompiler
             com.mojang.renderpearl.api.pipeline.ShaderSource
             com.mojang.renderpearl.api.pipeline.ShaderType
+            'com.mojang.renderpearl.api.pipeline.ShaderSource$CachedIncludeSource'
+            'com.mojang.renderpearl.api.pipeline.CompiledRenderPipeline$Pending'
+            com.mojang.renderpearl.api.pipeline.BindGroupLayout
+            'com.mojang.renderpearl.api.pipeline.BindGroupLayout$Builder'
+            com.mojang.renderpearl.api.pipeline.UniformType
+            com.mojang.renderpearl.api.pipeline.ColorTargetState
+            com.mojang.renderpearl.api.pipeline.DepthStencilState
+            com.mojang.renderpearl.api.GpuFormat
+            com.mojang.renderpearl.frontend.FrontendGpuDevice
             'com.mojang.renderpearl.api.pipeline.RenderPipeline$Builder'
             'com.mojang.renderpearl.api.pipeline.RenderPipeline$Snippet'
             com.mojang.renderpearl.backend.api.GpuDeviceBackend
@@ -84,6 +97,33 @@ jobs:
             echo "===== $cls =====" | tee -a renderpearl-api/api.txt
             javap -classpath "$MCJAR" -p -s "$cls" | tee -a renderpearl-api/api.txt
           done
+
+          jar tf "$MCJAR" \
+            | grep -Ei 'com/mojang/renderpearl/.*(Compute|Storage|Image).*class
+      - name: Upload RenderPearl API dump
+        uses: actions/upload-artifact@v4
+        with:
+          name: renderpearl-api-26.3
+          path: renderpearl-api/
+
+      - name: Upload Fabric build
+        uses: actions/upload-artifact@v4
+        with:
+          name: iris-vulkan-fabric-26.3
+          path: |
+            upstream/build/libs/iris-fabric-*.jar
+          if-no-files-found: warn
+
+      - name: Upload NeoForge build
+        uses: actions/upload-artifact@v4
+        with:
+          name: iris-vulkan-neoforge-26.3
+          path: |
+            upstream/build/libs/iris-neoforge-*.jar
+          if-no-files-found: warn
+ \
+            | sort -u \
+            | tee renderpearl-api/advanced-classes.txt || true
 
       - name: Upload RenderPearl API dump
         uses: actions/upload-artifact@v4
