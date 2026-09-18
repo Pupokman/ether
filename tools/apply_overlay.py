@@ -107,3 +107,27 @@ if old not in text:
 text = text.replace(old, new, 1)
 standard.write_text(text, encoding="utf-8")
 print("patched: StandardMacros Vulkan compatibility macros")
+
+
+# Treat an active parsed shaderpack as "in use" on Vulkan so backend-neutral
+# vertex-format and submission mixins can operate before the Vulkan renderer
+# replaces the legacy IrisRenderingPipeline.
+iris = root / "common/src/main/java/net/irisshaders/iris/Iris.java"
+text = iris.read_text(encoding="utf-8")
+old = (
+    "\tpublic static boolean isPackInUseQuick() {\n"
+    "\t\treturn getPipelineManager().getPipelineNullable() instanceof IrisRenderingPipeline;\n"
+    "\t}"
+)
+new = (
+    "\tpublic static boolean isPackInUseQuick() {\n"
+    "\t\tif (IrisBackendRuntime.isVulkan()) {\n"
+    "\t\t\treturn currentPack != null && !fallback;\n"
+    "\t\t}\n"
+    "\t\treturn getPipelineManager().getPipelineNullable() instanceof IrisRenderingPipeline;\n"
+    "\t}"
+)
+if old not in text:
+    raise SystemExit("Iris.isPackInUseQuick seam changed upstream")
+iris.write_text(text.replace(old, new, 1), encoding="utf-8")
+print("patched: Iris Vulkan shaderpack-active state")
