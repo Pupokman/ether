@@ -61,6 +61,13 @@ jobs:
 
           classes=(
             com.mojang.renderpearl.frontend.shaders.PipelineBuilder
+            com.mojang.renderpearl.frontend.shaders.GlslCompiler
+            com.mojang.renderpearl.api.pipeline.ShaderSource
+            com.mojang.renderpearl.api.pipeline.ShaderType
+            com.mojang.renderpearl.api.pipeline.RenderPipeline\\$Builder
+            com.mojang.renderpearl.api.pipeline.RenderPipeline\\$Snippet
+            com.mojang.renderpearl.backend.api.GpuDeviceBackend
+            com.mojang.blaze3d.systems.RenderSystem
             com.mojang.renderpearl.api.pipeline.RenderPipeline
             com.mojang.renderpearl.api.pipeline.CompiledRenderPipeline
             com.mojang.renderpearl.frontend.FrontendRenderPipeline
