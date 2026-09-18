@@ -18,6 +18,7 @@ public class IrisMixinPlugin implements IMixinConfigPlugin {
     private static final Splitter OPTION_SPLITTER = Splitter.on(':').limit(2);
 
     private static final Set<String> VULKAN_SAFE_MIXINS = Set.of(
+        "net.irisshaders.iris.mixin.GpuDeviceAccessor",
         "net.irisshaders.iris.mixin.MixinPipelineBuilder",
         "net.irisshaders.iris.mixin.MixinRenderPipeline",
         "net.irisshaders.iris.mixin.vertices.MixinBufferBuilder",
