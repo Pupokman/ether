@@ -38,6 +38,52 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon build
 
+      - name: Probe RenderPearl 26.3 API
+        shell: bash
+        run: |
+          set -euo pipefail
+          TARGET='com/mojang/renderpearl/frontend/shaders/PipelineBuilder.class'
+          MCJAR=''
+          while IFS= read -r jarfile; do
+            if jar tf "$jarfile" 2>/dev/null | grep -q "$TARGET"; then
+              MCJAR="$jarfile"
+              break
+            fi
+          done < <(find "$HOME/.gradle/caches" "$GITHUB_WORKSPACE/upstream" -type f -name '*.jar' 2>/dev/null)
+
+          if [ -z "$MCJAR" ]; then
+            echo "::error::Could not locate mapped Minecraft 26.3 jar containing $TARGET"
+            exit 1
+          fi
+
+          echo "RENDERPEARL_JAR=$MCJAR"
+          mkdir -p renderpearl-api
+
+          classes=(
+            com.mojang.renderpearl.frontend.shaders.PipelineBuilder
+            com.mojang.renderpearl.api.pipeline.RenderPipeline
+            com.mojang.renderpearl.api.pipeline.CompiledRenderPipeline
+            com.mojang.renderpearl.frontend.FrontendRenderPipeline
+            com.mojang.renderpearl.backend.api.BackendRenderPipeline
+            com.mojang.renderpearl.api.device.GpuDevice
+            com.mojang.renderpearl.api.commands.CommandEncoder
+            com.mojang.renderpearl.api.commands.RenderPass
+            com.mojang.renderpearl.api.textures.GpuTexture
+            com.mojang.renderpearl.api.textures.GpuTextureView
+            com.mojang.renderpearl.api.textures.GpuSampler
+          )
+
+          for cls in "${classes[@]}"; do
+            echo "===== $cls =====" | tee -a renderpearl-api/api.txt
+            javap -classpath "$MCJAR" -p -s "$cls" | tee -a renderpearl-api/api.txt
+          done
+
+      - name: Upload RenderPearl API dump
+        uses: actions/upload-artifact@v4
+        with:
+          name: renderpearl-api-26.3
+          path: renderpearl-api/api.txt
+
       - name: Upload Fabric build
         uses: actions/upload-artifact@v4
         with:
