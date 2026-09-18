@@ -64,8 +64,8 @@ jobs:
             com.mojang.renderpearl.frontend.shaders.GlslCompiler
             com.mojang.renderpearl.api.pipeline.ShaderSource
             com.mojang.renderpearl.api.pipeline.ShaderType
-            com.mojang.renderpearl.api.pipeline.RenderPipeline\\$Builder
-            com.mojang.renderpearl.api.pipeline.RenderPipeline\\$Snippet
+            'com.mojang.renderpearl.api.pipeline.RenderPipeline$Builder'
+            'com.mojang.renderpearl.api.pipeline.RenderPipeline$Snippet'
             com.mojang.renderpearl.backend.api.GpuDeviceBackend
             com.mojang.blaze3d.systems.RenderSystem
             com.mojang.renderpearl.api.pipeline.RenderPipeline
