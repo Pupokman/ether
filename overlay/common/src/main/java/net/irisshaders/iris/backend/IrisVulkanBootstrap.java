@@ -3,6 +3,7 @@ package net.irisshaders.iris.backend;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.caffeinemc.mods.sodium.api.vertex.serializer.VertexSerializerRegistry;
 import net.irisshaders.iris.Iris;
+import net.irisshaders.iris.backend.vulkan.VulkanCompilerSmokeTest;
 import net.irisshaders.iris.vertices.IrisVertexFormats;
 import net.irisshaders.iris.vertices.sodium.EntityToTerrainVertexSerializer;
 import net.irisshaders.iris.vertices.sodium.GlyphExtVertexSerializer;
@@ -50,6 +51,7 @@ public final class IrisVulkanBootstrap {
         // Parses selected shaderpack, options, includes and directives.
         // No GlProgram/GlFramebuffer must be created on this path.
         Iris.loadShaderpack();
+        VulkanCompilerSmokeTest.run();
 
         Iris.logger.info(
             "Iris Vulkan frontend initialized. Shaderpack parsing is active; "
